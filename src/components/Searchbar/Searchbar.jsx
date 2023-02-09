@@ -1,6 +1,8 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 
+// ========== styles ==========
+
 import styles from './Searchbar.module.css';
 
 class Searchbar extends Component {
@@ -39,6 +41,7 @@ class Searchbar extends Component {
             className={styles.searchForm_input}
             type="text"
             value={search}
+            name="search"
             onChange={handleChange}
             placeholder="Search images and photos"
             autoComplete="off"

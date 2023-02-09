@@ -1,50 +1,99 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import { Vortex } from 'react-loader-spinner';
 
+// ========== components ==========
+
+import searchImages from './services/api';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
+import Modal from './Modal/Modal';
+import LargeImage from './LargeImage/LargeImage';
+import Loader from './Loader/Loader';
+
+// ========== styles ==========
+
+import styles from './App.module.css';
 
 class App extends Component {
   state = {
     search: '',
     images: [],
-    loading: false,
+    page: 1,
+    isLoading: false,
     error: null,
+    showModal: false,
+    largeImage: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { search } = this.state;
-    if (prevState.search !== search) {
-      axios(
-        `https://pixabay.com/api/?q=${search}&page=1&key=your_key&image_type=photo&orientation=horizontal&per_page=12`
-      )
-        .then(({ data }) => this.setState({ images: data }))
-        .catch(error => this.setState({ error: error.message }))
-        .finally(() => this.setState({ loading: false }));
+    const { search, page } = this.state;
+
+    if (prevState.search !== search || prevState.page !== page) {
+      this.setState({ isLoading: true });
+      this.fetchImages();
+    }
+  }
+
+  async fetchImages() {
+    try {
+      const { images, search, page } = this.state;
+      const response = await searchImages(search, page);
+      const imagesInfo = response.map(
+        ({ id, webformatURL, largeImageURL, tags }) => {
+          return {
+            id,
+            smallImg: webformatURL,
+            largeImg: largeImageURL,
+            descr: tags,
+          };
+        }
+      );
+
+      this.setState({ images: [...images, ...imagesInfo] });
+    } catch (error) {
+      this.setState({ error: error.message });
+    } finally {
+      this.setState({ isLoading: false });
     }
   }
 
   searchImages = ({ search }) => {
-    this.setState({ search });
+    this.setState({ search, images: [], page: 1 });
+  };
+
+  onLoadMore = () => {
+    const { page } = this.state;
+    this.setState({ page: page + 1 });
+  };
+
+  onModalOpen = ({ largeImg, alt }) => {
+    this.setState({ largeImage: { largeImg, alt }, showModal: true });
+  };
+
+  onModalCLose = () => {
+    this.setState({ showModal: false, largeImage: '' });
   };
 
   render() {
-    const { images, error, loading } = this.state;
+    const { images, isLoading, error, showModal, largeImage } = this.state;
 
     return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr',
-          gridGap: '16px',
-          paddingBottom: '24px',
-        }}
-      >
+      <div className={styles.app}>
         <Searchbar onSubmit={this.searchImages} />
-        <ImageGallery items={images} />
+        <ImageGallery items={images} openModal={this.onModalOpen} />
         {error && <p>{error}</p>}
-        {loading && <p>...loading</p>}
+        {isLoading && <Loader />}
+        {Boolean(images.length) && (
+          <div className={styles.buttonWrap}>
+            <Button clickHandler={this.onLoadMore} />
+          </div>
+        )}
+
+        {showModal && (
+          <Modal closeModal={this.onModalCLose}>
+            <LargeImage {...largeImage} />
+          </Modal>
+        )}
       </div>
     );
   }
