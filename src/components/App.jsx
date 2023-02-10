@@ -39,7 +39,7 @@ class App extends Component {
     try {
       const { images, search, page, total } = this.state;
       const response = await searchImages(search, page, total);
-      console.log(response);
+
       const imagesInfo = response.hits.map(
         ({ id, webformatURL, largeImageURL, tags }) => {
           return {
@@ -52,7 +52,6 @@ class App extends Component {
       );
 
       const totalImgs = response.totalHits;
-      console.log(totalImgs);
 
       this.setState({ images: [...images, ...imagesInfo], total: totalImgs });
     } catch (error) {
@@ -89,7 +88,7 @@ class App extends Component {
         {search && <ImageGallery items={images} openModal={this.onModalOpen} />}
         {error && <p>{error}</p>}
         {isLoading && <Loader />}
-        {Boolean(images.length) && !isLoading && images.length < total && (
+        {images.length < total && !isLoading && (
           <div className={styles.buttonWrap}>
             <Button clickHandler={this.onLoadMore} />
           </div>
