@@ -36,7 +36,7 @@ const searchImages = async (q, page) => {
       page,
     },
   });
-  return response.data.hits;
+  return response.data;
 };
 
 export default searchImages;

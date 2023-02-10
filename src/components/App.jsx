@@ -38,7 +38,8 @@ class App extends Component {
     try {
       const { images, search, page } = this.state;
       const response = await searchImages(search, page);
-      const imagesInfo = response.map(
+      console.log(response);
+      const imagesInfo = response.hits.map(
         ({ id, webformatURL, largeImageURL, tags }) => {
           return {
             id,
