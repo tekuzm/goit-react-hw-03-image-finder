@@ -23,6 +23,7 @@ class App extends Component {
     error: null,
     showModal: false,
     largeImage: '',
+    total: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -36,8 +37,8 @@ class App extends Component {
 
   async fetchImages() {
     try {
-      const { images, search, page } = this.state;
-      const response = await searchImages(search, page);
+      const { images, search, page, total } = this.state;
+      const response = await searchImages(search, page, total);
       console.log(response);
       const imagesInfo = response.hits.map(
         ({ id, webformatURL, largeImageURL, tags }) => {
@@ -50,7 +51,10 @@ class App extends Component {
         }
       );
 
-      this.setState({ images: [...images, ...imagesInfo] });
+      const totalImgs = response.totalHits;
+      console.log(totalImgs);
+
+      this.setState({ images: [...images, ...imagesInfo], total: totalImgs });
     } catch (error) {
       this.setState({ error: error.message });
     } finally {
@@ -76,7 +80,7 @@ class App extends Component {
   };
 
   render() {
-    const { search, images, isLoading, error, showModal, largeImage } =
+    const { search, images, isLoading, total, error, showModal, largeImage } =
       this.state;
 
     return (
@@ -85,7 +89,7 @@ class App extends Component {
         {search && <ImageGallery items={images} openModal={this.onModalOpen} />}
         {error && <p>{error}</p>}
         {isLoading && <Loader />}
-        {Boolean(images.length) && !isLoading && (
+        {Boolean(images.length) && !isLoading && images.length < total && (
           <div className={styles.buttonWrap}>
             <Button clickHandler={this.onLoadMore} />
           </div>
