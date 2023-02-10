@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 // ========== components ==========
 
-import searchImages from './services/api';
+import searchImages from '../services/api';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
@@ -75,15 +75,16 @@ class App extends Component {
   };
 
   render() {
-    const { images, isLoading, error, showModal, largeImage } = this.state;
+    const { search, images, isLoading, error, showModal, largeImage } =
+      this.state;
 
     return (
       <div className={styles.app}>
         <Searchbar onSubmit={this.searchImages} />
-        <ImageGallery items={images} openModal={this.onModalOpen} />
+        {search && <ImageGallery items={images} openModal={this.onModalOpen} />}
         {error && <p>{error}</p>}
         {isLoading && <Loader />}
-        {Boolean(images.length) && (
+        {Boolean(images.length) && !isLoading && (
           <div className={styles.buttonWrap}>
             <Button clickHandler={this.onLoadMore} />
           </div>
