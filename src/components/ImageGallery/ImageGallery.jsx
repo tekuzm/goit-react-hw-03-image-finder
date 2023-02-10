@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 // ========== components ==========
 
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
@@ -25,4 +27,8 @@ export default ImageGallery;
 
 ImageGallery.defaultProps = {
   items: [],
+};
+
+ImageGallery.propTypes = {
+  openModal: PropTypes.func.isRequired,
 };

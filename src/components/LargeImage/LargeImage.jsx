@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 // ========== styles ==========
 
 import styles from './LargeImage.module.css';
@@ -9,3 +11,8 @@ const LargeImage = ({ largeImg, alt }) => (
 );
 
 export default LargeImage;
+
+LargeImage.propTypes = {
+  largeImg: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+};

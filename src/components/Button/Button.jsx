@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 // ========== styles ==========
 
 import styles from './Button.module.css';
@@ -9,3 +11,7 @@ const Button = ({ clickHandler }) => (
 );
 
 export default Button;
+
+Button.propTypes = {
+  clickHandler: PropTypes.func.isRequired,
+};
